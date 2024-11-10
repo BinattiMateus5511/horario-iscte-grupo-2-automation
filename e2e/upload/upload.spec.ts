@@ -44,7 +44,7 @@ test.describe('Upload de arquivos', () => {
     const fileName = "vazio.csv"
     const expectedErrorMessage = "O arquivo CSV está vazio e não pode ser processado.";
 
-    await uploadPage.uploadFile(fileName, 1);
+    await uploadPage.uploadFile(fileName, 1, '', 'button:text("Upload")');
     await uploadPage.captureErrorMessage('.success-message-container');
 
     const consoleMessage = uploadPage.getConsoleMessage();
@@ -66,7 +66,7 @@ test.describe('Upload de arquivos', () => {
     const botaoEliminarLocator = 'Eliminar';
     const botaoCancelarLocator = 'Cancelar';
 
-    await uploadPage.uploadFile(fileName, 1);
+    await uploadPage.uploadFile(fileName, 1, '', 'button:text("Upload")');
     await uploadPage.captureErrorMessage('.success-message-container');
 
     const displayedMessage = uploadPage.getErrorMessage();
@@ -97,6 +97,7 @@ test.describe('Upload de arquivos', () => {
   test('Validar upload de arquivo de estrutura de salas', async () => {
 
     const fileName = "ficheiro-estrutura-salas.csv";
+    const successMessage = "Salas atualizadas com sucesso!";
 
     await uploadPage.clickButton('Alterar Estrutura das Salas');
     const uploadElement = (await uploadPage.findElementByRoleAndText('button', 'Upload')).nth(1);
@@ -104,13 +105,12 @@ test.describe('Upload de arquivos', () => {
     await uploadPage.clickButton('Fechar');
 
     await uploadPage.clickButton('Alterar Estrutura das Salas');
-    await uploadPage.uploadFile(fileName, 1, 'upload-salas');
-    await uploadElement.click();
-    
-    await uploadPage.captureErrorMessage('.success-message-container');
-    
-    
+    await uploadPage.uploadFile(fileName, 1, 'upload-salas', '.upload-container button:text("Upload")');
 
+    const message = uploadPage.getElementByText(successMessage);  
+    expect(await message.textContent()).toBe('Salas atualizadas com sucesso!');
+    const closeRoomsElement = await uploadPage.closeRoomsSuccess();
+    await closeRoomsElement.click();
   });
 
 
