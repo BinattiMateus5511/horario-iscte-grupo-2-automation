@@ -26,17 +26,20 @@ export class UploadPage {
 
   }
 
-  async uploadFile(file: string){
-
+  async uploadFile(file: string, index: number, containerSelector: string = '') {
+  
     const uploadButton = this.page.locator('button:text("Upload")');
+    const fileUploadLocator = this.page.locator(`${containerSelector ? containerSelector + ' ' : ''}#fileUpload:nth-of-type(${index})`);
+  
+    await fileUploadLocator.waitFor({ state: 'visible' });
 
     const [fileChooser] = await Promise.all([
-        this.page.waitForEvent('filechooser'),
-        this.page.locator('#fileUpload').click(),
-      ]);
+      this.page.waitForEvent('filechooser'),
+      fileUploadLocator.click(),
+    ]);
   
-      await fileChooser.setFiles([file]);
-      await uploadButton.click();
+    await fileChooser.setFiles([file]);
+    await uploadButton.click();
 
   }
 
@@ -78,6 +81,24 @@ export class UploadPage {
 
   async getTableHeadersCount(): Promise<number> {
     return await this.headers.count();
+  }
+
+  async findElement(locator: string){
+    return this.page.getByText(locator);
+  }
+
+  async findElementByRoleAndText(role: string, name: string) {
+  return this.page.locator(`role=${role}[name=${name}]`);
+}
+
+  async countElements(){
+    const elements = await this.page.locator('#fileUpload').all();
+    console.log(elements.length);
+  }
+
+  async testMethod(){
+    const uploadButton = this.page.getByRole('button', { name: 'Upload' }).nth(1);
+    await uploadButton.click();
   }
 
 
