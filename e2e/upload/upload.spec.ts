@@ -61,7 +61,17 @@ test.describe('Upload de arquivos', () => {
 
   });
 
-  
+  test('Validar o grid de horários carregados', async () =>{
+
+    await uploadPage.captureTableHeaders();
+
+    const tableHeadersText = await uploadPage.getTableHeaders();
+    const tableHeadersCount = await uploadPage.getTableHeadersCount();
+
+    expect(tableHeadersCount).toBe(4);
+    expect(tableHeadersText).toBe("[ 'ID', 'Nome do Horário', 'Data de Upload', 'Ações' ]");
+
+  });
 
   
 
