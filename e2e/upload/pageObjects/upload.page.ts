@@ -1,9 +1,11 @@
 import { Page } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 export class UploadPage {
   private page: Page;
   private consoleMessage: string = '';
   private errorMessage: string = '';
+  private successMessage: string = '';
   private headers;
 
   constructor(page: Page) {
@@ -26,9 +28,9 @@ export class UploadPage {
 
   }
 
-  async uploadFile(file: string, index: number, containerSelector: string = '') {
+  async uploadFile(file: string, index: number, containerSelector: string = '', uploadLocator: string = '') {
   
-    const uploadButton = this.page.locator('button:text("Upload")');
+    const uploadButton = this.page.locator(uploadLocator);
     const fileUploadLocator = this.page.locator(`${containerSelector ? containerSelector + ' ' : ''}#fileUpload:nth-of-type(${index})`);
   
     await fileUploadLocator.waitFor({ state: 'visible' });
@@ -96,10 +98,24 @@ export class UploadPage {
     console.log(elements.length);
   }
 
-  async testMethod(){
-    const uploadButton = this.page.getByRole('button', { name: 'Upload' }).nth(1);
-    await uploadButton.click();
+  async captureMessage(locator: string){
+    const message = await this.page.locator(locator).textContent();
+    this.successMessage = message ?? "";
+
   }
 
+  getMessage(): string{
+    return this.successMessage;
+  }
+
+  getElementByText(expectedMessage: string){
+    const message = this.page.getByText(expectedMessage);
+    return message;
+  }
+
+  async closeRoomsSuccess(){
+    const successModalCloseButton = this.page.locator('app-success-error-modal').filter({ hasText: 'Salas atualizadas com sucesso' }).getByRole('button');      
+    return successModalCloseButton;
+  }
 
 }
