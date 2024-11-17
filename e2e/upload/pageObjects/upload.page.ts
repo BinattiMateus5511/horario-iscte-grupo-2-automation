@@ -71,6 +71,14 @@ export class UploadPage {
   async clickButton(locator: string){
     await this.page.getByRole('button', {name: locator}).click(); 
   }
+
+  async clickButtonWithinContainer(containerSelector, buttonName) {
+    await this.page
+    .locator(containerSelector)
+    .getByRole('button', { name: buttonName })
+    .click();
+  }
+
   
   async captureTableHeaders(){
      this.headers = this.page.locator('table thead tr th');
@@ -117,5 +125,23 @@ export class UploadPage {
     const successModalCloseButton = this.page.locator('app-success-error-modal').filter({ hasText: 'Salas atualizadas com sucesso' }).getByRole('button');      
     return successModalCloseButton;
   }
+
+  async uploadWrongStructureFile(file: string, index: number, containerSelector: string = '', uploadLocator: string = '') {
+  
+    const uploadButton = this.page.locator(uploadLocator);
+    const fileUploadLocator = this.page.locator(`${containerSelector ? containerSelector + ' ' : ''}#fileUpload:nth-of-type(${index})`);
+  
+    await fileUploadLocator.waitFor({ state: 'visible' });
+
+    const [fileChooser] = await Promise.all([
+      this.page.waitForEvent('filechooser'),
+      fileUploadLocator.click(),
+    ]);
+  
+    await fileChooser.setFiles([file]);
+
+  }
+
+
 
 }

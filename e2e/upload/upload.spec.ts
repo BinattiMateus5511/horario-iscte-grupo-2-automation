@@ -14,18 +14,6 @@ test.describe('Upload de arquivos', () => {
 
   });
 
-  test('Validar o grid de horários carregados', async () =>{
-
-    await uploadPage.captureTableHeaders();
-
-    const tableHeadersText = await uploadPage.getTableHeaders();
-    const tableHeadersCount = await uploadPage.getTableHeadersCount();
-
-    expect(tableHeadersCount).toBe(4);
-    expect(tableHeadersText).toStrictEqual(['ID', 'Nome do Horário', 'Data de Upload', 'Ações']);
-
-  });
-
   test('Validar upload de arquivo com extensao diferente de .csv', async () => {
 
     const fileName = "teste.pdf"
@@ -78,6 +66,14 @@ test.describe('Upload de arquivos', () => {
     const botaoDetalhesElement = await uploadPage.findElement(botaoDetalhesLocator);
     const botaoApagarElement = await uploadPage.findElement(botaoApagarLocator);
     
+    await uploadPage.captureTableHeaders();
+
+    const tableHeadersText = await uploadPage.getTableHeaders();
+    const tableHeadersCount = await uploadPage.getTableHeadersCount();
+
+    expect(tableHeadersCount).toBe(4);
+    expect(tableHeadersText).toStrictEqual(['ID', 'Nome do Horário', 'Data de Upload', 'Ações']);
+
     await expect(fileNameElement).toBeVisible();
     await expect(botaoDetalhesElement).toBeVisible();
     await expect(botaoApagarElement).toBeVisible();
@@ -93,6 +89,37 @@ test.describe('Upload de arquivos', () => {
     await expect(botaoApagarElement).toHaveCount(0);
 
   });
+
+  test('Validar upload de arquivo de estrutura em branco', async () => {
+    const fileName = "vazio.csv"
+    const expectedErrorMessage = "O arquivo CSV está vazio e não pode ser processado.";
+
+    await uploadPage.clickButton('Alterar Estrutura das Salas');
+    await uploadPage.uploadFile(fileName, 1, 'upload-salas', '.upload-container button:text("Upload")');
+
+    const message = uploadPage.getElementByText(expectedErrorMessage);  
+    expect(await message.textContent()).toBe('O arquivo CSV está vazio e não pode ser processado.');
+    
+    await uploadPage.clickButtonWithinContainer('.success-message-container', 'Fechar')
+    
+  });
+
+  test('Validar upload de arquivo de estrutura diferente de CSV', async () => {
+    const fileName = "teste.pdf"
+    const expectedErrorMessage = "Apenas arquivos .csv são permitidos.";
+
+    await uploadPage.clickButton('Alterar Estrutura das Salas');
+    const uploadElement = (await uploadPage.findElementByRoleAndText('button', 'Upload')).nth(1);
+    await uploadPage.uploadWrongStructureFile(fileName, 1, 'upload-salas', '.upload-container button:text("Upload")');
+
+    const message = uploadPage.getElementByText(expectedErrorMessage);  
+    expect(await message.textContent()).toBe('Apenas arquivos .csv são permitidos.');
+    
+    await expect(uploadElement).toBeDisabled();
+    await uploadPage.clickButton('Fechar');
+    
+  });
+
 
   test('Validar upload de arquivo de estrutura de salas', async () => {
 
