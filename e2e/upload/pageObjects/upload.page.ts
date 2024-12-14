@@ -128,9 +128,8 @@ export class UploadPage {
 
   async uploadWrongStructureFile(file: string, index: number, containerSelector: string = '', uploadLocator: string = '') {
   
-    const uploadButton = this.page.locator(uploadLocator);
     const fileUploadLocator = this.page.locator(`${containerSelector ? containerSelector + ' ' : ''}#fileUpload:nth-of-type(${index})`);
-  
+
     await fileUploadLocator.waitFor({ state: 'visible' });
 
     const [fileChooser] = await Promise.all([

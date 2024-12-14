@@ -72,7 +72,7 @@ test.describe('Upload de arquivos', () => {
     const tableHeadersCount = await uploadPage.getTableHeadersCount();
 
     expect(tableHeadersCount).toBe(4);
-    expect(tableHeadersText).toStrictEqual(['ID', 'Nome do Horário', 'Data de Upload', 'Ações']);
+    expect(tableHeadersText).toStrictEqual(['ID', 'Nome do Horário', 'Data de Upload Ordenar ', 'Ações']);
 
     await expect(fileNameElement).toBeVisible();
     await expect(botaoDetalhesElement).toBeVisible();
