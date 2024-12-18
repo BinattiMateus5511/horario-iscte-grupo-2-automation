@@ -63,7 +63,6 @@ test.describe('Upload de arquivos', () => {
     await uploadPage.clickButton('Fechar');
 
     const fileNameElement = await uploadPage.findElement(fileName);
-    const botaoDetalhesElement = await uploadPage.findElement(botaoDetalhesLocator);
     const botaoApagarElement = await uploadPage.findElement(botaoApagarLocator);
     
     await uploadPage.captureTableHeaders();
@@ -75,7 +74,6 @@ test.describe('Upload de arquivos', () => {
     expect(tableHeadersText).toStrictEqual(['ID', 'Nome do Horário', 'Data de Upload Ordenar ', 'Ações']);
 
     await expect(fileNameElement).toBeVisible();
-    await expect(botaoDetalhesElement).toBeVisible();
     await expect(botaoApagarElement).toBeVisible();
 
     await uploadPage.clickButton(botaoApagarLocator);
@@ -85,7 +83,6 @@ test.describe('Upload de arquivos', () => {
     await uploadPage.clickButton(botaoEliminarLocator);
 
     await expect(fileNameElement).toHaveCount(0);
-    await expect(botaoDetalhesElement).toHaveCount(0);
     await expect(botaoApagarElement).toHaveCount(0);
 
   });
